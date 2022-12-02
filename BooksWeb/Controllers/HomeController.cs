@@ -13,6 +13,10 @@ namespace BooksWeb.Controllers
             _logger = logger;
         }
 
+        // url: /home/index would return the contents of this routine
+        // View() serves up the index page by going to views, then the name of the controller
+        // then getting the .cshtml file with the name of the action
+        // so filepath views/home/index.cshtml
         public IActionResult Index()
         {
             return View();
