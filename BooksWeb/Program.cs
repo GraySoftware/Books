@@ -1,8 +1,16 @@
+using BooksWeb.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 // if we want to register anything in our dependency injector do it here
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+    // this method looks inside the block specifically named "ConnectionStrings" in our json file
+    // and looks for the key given in its arguments
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ));
 builder.Services.AddMvc();
 var app = builder.Build();
 
