@@ -1,5 +1,5 @@
-﻿using BooksWeb.Data; // gives us access to applicationDbContext
-using BooksWeb.Models;
+﻿using Books.DataAccess;// gives us access to applicationDbContext
+using Books.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BooksWeb.Controllers
