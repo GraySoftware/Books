@@ -7,19 +7,19 @@ namespace BooksWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _db;
+        private readonly IUnitOfWork _UnitOfWork;
 
         // the ApplicationDbContext db i nthe arguments gives us access to the applicationDbContext.cs class 
         // through dependency injection that is made available in the program.cs file.
         // thus this object will be configured the same way (using the same connection string)
-        public CategoryController(ICategoryRepository db)
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _UnitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
             // this accesses the database, retrieves the entire categories table and returns it as a list
-            IEnumerable<Category> objCategoryList = _db.GetAll();
+            IEnumerable<Category> objCategoryList = _UnitOfWork.Category.GetAll();
             return View(objCategoryList);
         }
 
@@ -39,8 +39,8 @@ namespace BooksWeb.Controllers
             }
             if (ModelState.IsValid)
             {
-                _db.Add(obj);
-                _db.Save();
+                _UnitOfWork.Category.Add(obj);
+                _UnitOfWork.Save();
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
@@ -57,7 +57,7 @@ namespace BooksWeb.Controllers
             }
             // use the id to get the category object
             //var categoryFromDb = _db.Categories.Find(id);
-            var categoryFromDbFirst = _db.GetFirstOrDefault(u=>u.Id==id);
+            var categoryFromDbFirst = _UnitOfWork.Category.GetFirstOrDefault(u=>u.Id==id);
             //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
             if (categoryFromDbFirst == null)
             {
@@ -79,8 +79,8 @@ namespace BooksWeb.Controllers
             }
             if (ModelState.IsValid)
             {
-                _db.Update(obj);
-                _db.Save();
+                _UnitOfWork.Category.Update(obj);
+                _UnitOfWork.Save();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
@@ -96,7 +96,7 @@ namespace BooksWeb.Controllers
                 return NotFound();
             }
             // use the id to get the category object
-            var categoryFromDb = _db.GetFirstOrDefault(u => u.Id == id);
+            var categoryFromDb = _UnitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
             //var categoryFromDb = _db.Categories.Find(id);
             //var categoryFromDbFirst = _db.Categories.FirstOrDefault(u=>u.Id==id);
             //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
@@ -114,8 +114,8 @@ namespace BooksWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(Category obj)
         {
-            _db.Remove(obj);
-            _db.Save();
+            _UnitOfWork.Category.Remove(obj);
+            _UnitOfWork.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }
