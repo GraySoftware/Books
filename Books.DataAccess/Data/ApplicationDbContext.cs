@@ -14,5 +14,7 @@ public class ApplicationDbContext : DbContext
     // note that in order for it to know what file to use we had to add the using BooksWeb.Models;
     // statement at the top to point to the models folder
     public DbSet<Category> Categories { get; set; }
+
+    public DbSet<CoverType> CoverTypes { get; set; }
 }
 
