@@ -37,6 +37,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     // pattern defines the default controller/action a request will take. 
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
