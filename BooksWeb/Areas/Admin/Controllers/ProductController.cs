@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Books.DataAccess;
 using Books.Models;
 using Books.DataAccess.Repository.IRepository;
+using Books.Models.ViewModels;
 
 namespace BooksWeb.Controllers
 {
@@ -44,42 +45,58 @@ namespace BooksWeb.Controllers
             return View(Product);
         }
 
-        // GET: Product/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Product/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name")] Product Product)
-        {
-            if (ModelState.IsValid)
-            {
-                _UnitOfWork.Product.Add(Product);
-                _UnitOfWork.Save();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(Product);
-        }
-
         // GET: Product/Edit/5
-        public IActionResult Edit(int? id)
+        public IActionResult Upsert(int? id)
         {
-            if (id == null || _UnitOfWork.Product.GetAll == null)
+            //Product product = new();
+            //// here we are creating dropdown lists populated with
+            //// information from the Category table is passed using ViewBag
+            //// information from the CoverType table is passed using ViewData
+            //IEnumerable<SelectListItem> CategoryList = _UnitOfWork.Category.GetAll().Select(
+            //    u=> new SelectListItem
+            //    {
+            //        Text = u.Name,
+            //        Value = u.Id.ToString()
+            //    });
+            //IEnumerable<SelectListItem> CoverTypeList = _UnitOfWork.CoverType.GetAll().Select(
+            //    u => new SelectListItem
+            //    {
+            //        Text = u.Name,
+            //        Value = u.Id.ToString()
+            //    });
+
+            // instead of doing it the way we were above
+            // here we are leveraging the ProductVM (Product View Model) we defined in DataAccess.ViewModels
+            // the advantage of doing it this way is now the view is tightly bound to the productVM rather\
+            // than loosley bound to multiple models
+            ProductVM productVM = new()
             {
-                return NotFound();
+                Product = new(),
+                CategoryList = _UnitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+                CoverTypeList = _UnitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+
+            if (id == null || id == 0)
+            {
+                // create product
+                //ViewBag.CategoryList = CategoryList;
+                //ViewData["CoverTypeList"] = CoverTypeList;
+                return View(productVM);
+            }
+            else
+            {
+                //update product
             }
 
-            var Product = _UnitOfWork.Product.GetFirstOrDefault(m => m.Id == id);
-            if (Product == null)
-            {
-                return NotFound();
-            }
-            return View(Product);
+            return View();
         }
 
         // POST: Product/Edit/5
@@ -87,7 +104,7 @@ namespace BooksWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name")] Product Product)
+        public IActionResult Upsert(int id, [Bind("Id,Name")] Product Product)
         {
             if (id != Product.Id)
             {
