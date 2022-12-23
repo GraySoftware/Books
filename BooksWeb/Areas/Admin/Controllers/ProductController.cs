@@ -11,86 +11,85 @@ using Books.DataAccess.Repository.IRepository;
 
 namespace BooksWeb.Controllers
 {
-
-    public class CoverTypeController : Controller
+    public class ProductController : Controller
     {
         private readonly IUnitOfWork _UnitOfWork;
 
-        public CoverTypeController(IUnitOfWork unitOfWork)
+        public ProductController(IUnitOfWork unitOfWork)
         {
             _UnitOfWork = unitOfWork;
         }
 
-        // GET: CoverType
+        // GET: Product
         public IActionResult Index()
         {
-            return View(_UnitOfWork.CoverType.GetAll());
+            return View(_UnitOfWork.Product.GetAll());
         }
 
-        // GET: CoverType/Details/5
+        // GET: Product/Details/5
         public IActionResult Details(int? id)
         {
-            IEnumerable<CoverType> objCoverTypeList = _UnitOfWork.CoverType.GetAll();
-            if (id == null || objCoverTypeList == null)
+            IEnumerable<Product> objProductList = _UnitOfWork.Product.GetAll();
+            if (id == null || objProductList == null)
             {
                 return NotFound();
             }
 
-            var coverType = objCoverTypeList.FirstOrDefault(m => m.Id == id);
-            if (coverType == null)
+            var Product = objProductList.FirstOrDefault(m => m.Id == id);
+            if (Product == null)
             {
                 return NotFound();
             }
 
-            return View(coverType);
+            return View(Product);
         }
 
-        // GET: CoverType/Create
+        // GET: Product/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: CoverType/Create
+        // POST: Product/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name")] CoverType coverType)
+        public IActionResult Create([Bind("Id,Name")] Product Product)
         {
             if (ModelState.IsValid)
             {
-                _UnitOfWork.CoverType.Add(coverType);
+                _UnitOfWork.Product.Add(Product);
                 _UnitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
-            return View(coverType);
+            return View(Product);
         }
 
-        // GET: CoverType/Edit/5
+        // GET: Product/Edit/5
         public IActionResult Edit(int? id)
         {
-            if (id == null || _UnitOfWork.CoverType.GetAll == null)
+            if (id == null || _UnitOfWork.Product.GetAll == null)
             {
                 return NotFound();
             }
 
-            var coverType = _UnitOfWork.CoverType.GetFirstOrDefault(m => m.Id == id);
-            if (coverType == null)
+            var Product = _UnitOfWork.Product.GetFirstOrDefault(m => m.Id == id);
+            if (Product == null)
             {
                 return NotFound();
             }
-            return View(coverType);
+            return View(Product);
         }
 
-        // POST: CoverType/Edit/5
+        // POST: Product/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name")] CoverType coverType)
+        public IActionResult Edit(int id, [Bind("Id,Name")] Product Product)
         {
-            if (id != coverType.Id)
+            if (id != Product.Id)
             {
                 return NotFound();
             }
@@ -99,12 +98,12 @@ namespace BooksWeb.Controllers
             {
                 try
                 {
-                    _UnitOfWork.CoverType.Update(coverType);
+                    _UnitOfWork.Product.Update(Product);
                     _UnitOfWork.Save();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CoverTypeExists(coverType.Id))
+                    if (!ProductExists(Product.Id))
                     {
                         return NotFound();
                     }
@@ -115,48 +114,48 @@ namespace BooksWeb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(coverType);
+            return View(Product);
         }
 
-        // GET: CoverType/Delete/5
+        // GET: Product/Delete/5
         public IActionResult Delete(int? id)
         {
-            if (id == null || _UnitOfWork.CoverType.GetAll == null)
+            if (id == null || _UnitOfWork.Product.GetAll == null)
             {
                 return NotFound();
             }
 
-            var coverType = _UnitOfWork.CoverType.GetFirstOrDefault(m => m.Id == id);
-            if (coverType == null)
+            var Product = _UnitOfWork.Product.GetFirstOrDefault(m => m.Id == id);
+            if (Product == null)
             {
                 return NotFound();
             }
 
-            return View(coverType);
+            return View(Product);
         }
 
-        // POST: CoverType/Delete/5
+        // POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            if (_UnitOfWork.CoverType.GetAll == null)
+            if (_UnitOfWork.Product.GetAll == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.CoverTypes'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Products'  is null.");
             }
-            var coverType = _UnitOfWork.CoverType.GetFirstOrDefault(m => m.Id == id);
-            if (coverType != null)
+            var Product = _UnitOfWork.Product.GetFirstOrDefault(m => m.Id == id);
+            if (Product != null)
             {
-                _UnitOfWork.CoverType.Remove(coverType);
+                _UnitOfWork.Product.Remove(Product);
             }
 
             _UnitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CoverTypeExists(int id)
+        private bool ProductExists(int id)
         {
-            if (_UnitOfWork.CoverType.GetFirstOrDefault(e => e.Id == id) == null)
+            if (_UnitOfWork.Product.GetFirstOrDefault(e => e.Id == id) == null)
             {
                 return false;
             }
@@ -167,3 +166,4 @@ namespace BooksWeb.Controllers
         }
     }
 }
+
