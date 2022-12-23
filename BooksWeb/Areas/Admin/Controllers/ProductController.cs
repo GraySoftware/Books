@@ -104,34 +104,16 @@ namespace BooksWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(int id, [Bind("Id,Name")] Product Product)
+        public IActionResult Upsert(ProductVM obj, IFormFile file)
         {
-            if (id != Product.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _UnitOfWork.Product.Update(Product);
-                    _UnitOfWork.Save();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(Product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                //_UnitOfWork.CoverType.Update(obj);
+                _UnitOfWork.Save();
+                TempData["success"] = "CoverType updated successfully";
+                return RedirectToAction("Index");
             }
-            return View(Product);
+            return View(obj);
         }
 
         // GET: Product/Delete/5
