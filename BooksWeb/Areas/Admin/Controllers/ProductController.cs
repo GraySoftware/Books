@@ -15,16 +15,18 @@ namespace BooksWeb.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _UnitOfWork;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ProductController(IUnitOfWork unitOfWork)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment hostEnvironment)
         {
             _UnitOfWork = unitOfWork;
+            _hostEnvironment = hostEnvironment;
         }
 
         // GET: Product
         public IActionResult Index()
         {
-            return View(_UnitOfWork.Product.GetAll());
+            return View();
         }
 
         // GET: Product/Details/5
@@ -77,7 +79,7 @@ namespace BooksWeb.Controllers
                     Text = i.Name,
                     Value = i.Id.ToString()
                 }),
-                CoverTypeList = _UnitOfWork.Category.GetAll().Select(i => new SelectListItem
+                CoverTypeList = _UnitOfWork.CoverType.GetAll().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
@@ -104,13 +106,26 @@ namespace BooksWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductVM obj, IFormFile file)
+        public IActionResult Upsert(ProductVM obj, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-                //_UnitOfWork.CoverType.Update(obj);
+                string wwwRootPath = _hostEnvironment.WebRootPath;
+                if(file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = Path.Combine(wwwRootPath, @"images\products");
+                    var extension = Path.GetExtension(file.FileName);
+
+                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName+extension), FileMode.Create))
+                    {
+                        file.CopyTo(fileStreams);
+                    }
+                    obj.Product.ImageUrl = @"\images\products\" + fileName + extension;
+                }
+                _UnitOfWork.Product.Add(obj.Product);
                 _UnitOfWork.Save();
-                TempData["success"] = "CoverType updated successfully";
+                TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -163,6 +178,15 @@ namespace BooksWeb.Controllers
                 return true;
             }
         }
+
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var productList = _UnitOfWork.Product.GetAll();
+            return Json(new { data = productList });
+        }
+        #endregion
     }
 }
 
