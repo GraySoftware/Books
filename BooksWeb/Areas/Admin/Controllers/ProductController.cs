@@ -95,6 +95,8 @@ namespace BooksWeb.Controllers
             }
             else
             {
+                productVM.Product = _UnitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+                return View(productVM);
                 //update product
             }
 
