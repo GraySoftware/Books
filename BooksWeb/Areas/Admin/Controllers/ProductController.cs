@@ -183,7 +183,7 @@ namespace BooksWeb.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var productList = _UnitOfWork.Product.GetAll();
+            var productList = _UnitOfWork.Product.GetAll(includeProperties:"Category,CoverType");
             return Json(new { data = productList });
         }
         #endregion
