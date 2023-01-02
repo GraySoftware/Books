@@ -110,22 +110,40 @@ namespace BooksWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(ProductVM obj, IFormFile? file)
         {
+
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _hostEnvironment.WebRootPath;
-                if(file != null)
+                if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString();
                     var uploads = Path.Combine(wwwRootPath, @"images\products");
                     var extension = Path.GetExtension(file.FileName);
 
-                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName+extension), FileMode.Create))
+                    if (obj.Product.ImageUrl != null)
+                    {
+                        var oldImagePath = Path.Combine(wwwRootPath, obj.Product.ImageUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
                     {
                         file.CopyTo(fileStreams);
                     }
                     obj.Product.ImageUrl = @"\images\products\" + fileName + extension;
+
                 }
-                _UnitOfWork.Product.Add(obj.Product);
+                if (obj.Product.Id == 0)
+                {
+                    _UnitOfWork.Product.Add(obj.Product);
+                }
+                else
+                {
+                    _UnitOfWork.Product.Update(obj.Product);
+                }
                 _UnitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index");
@@ -133,41 +151,24 @@ namespace BooksWeb.Controllers
             return View(obj);
         }
 
-        // GET: Product/Delete/5
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || _UnitOfWork.Product.GetAll == null)
-            {
-                return NotFound();
-            }
+        //// GET: Product/Delete/5
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null || _UnitOfWork.Product.GetAll == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var Product = _UnitOfWork.Product.GetFirstOrDefault(m => m.Id == id);
-            if (Product == null)
-            {
-                return NotFound();
-            }
+        //    var Product = _UnitOfWork.Product.GetFirstOrDefault(m => m.Id == id);
+        //    if (Product == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(Product);
-        }
+        //    return View(Product);
+        //}
 
-        // POST: Product/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            if (_UnitOfWork.Product.GetAll == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Products'  is null.");
-            }
-            var Product = _UnitOfWork.Product.GetFirstOrDefault(m => m.Id == id);
-            if (Product != null)
-            {
-                _UnitOfWork.Product.Remove(Product);
-            }
 
-            _UnitOfWork.Save();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool ProductExists(int id)
         {
@@ -188,6 +189,29 @@ namespace BooksWeb.Controllers
             var productList = _UnitOfWork.Product.GetAll(includeProperties:"Category,CoverType");
             return Json(new { data = productList });
         }
+
+        //POST
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var obj = _UnitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+            if (obj == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+
+            var oldImagePath = Path.Combine(_hostEnvironment.WebRootPath, obj.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+
+            _UnitOfWork.Product.Remove(obj);
+            _UnitOfWork.Save();
+            return Json(new { success = true, message = "Delete Successful" });
+
+        }
+
         #endregion
     }
 }
