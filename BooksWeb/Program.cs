@@ -2,6 +2,7 @@ using Books.DataAccess;
 using Books.DataAccess.Repository;
 using Books.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 // if we want to register anything in our dependency injector do it here
@@ -13,6 +14,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
     // and looks for the key given in its arguments
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
@@ -31,6 +35,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
