@@ -12,6 +12,7 @@ using Books.Models.ViewModels;
 
 namespace BooksWeb.Controllers
 {
+    [Area("Admin")]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _UnitOfWork;
