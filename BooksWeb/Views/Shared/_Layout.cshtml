@@ -37,6 +37,11 @@
                                 <a class="dropdown-item" class="nav-link " asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
                             </div>
                         </li>
+                        <li class="nav-item">
+                            <a class=nav-link asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-cart"></i>
+                            </a>
+                        </li>
                         <asp:dropdownlist runat="server" id="ddlTest">
                             <asp:listitem text="Red" value="1"></asp:listitem>
                             <asp:listitem text="Black" value="2"></asp:listitem>
