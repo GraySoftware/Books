@@ -1,8 +1,10 @@
 ﻿using Books.DataAccess.Repository.IRepository;
 using Books.Models;
 using Books.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BooksWeb.Controllers
 {
@@ -28,15 +30,32 @@ namespace BooksWeb.Controllers
             return View(productList);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int productId)
         {
             ShoppingCart cartObj = new()
             {
                 Count = 1,
-                Product = _unitOfWork.Product.GetFirstOrDefault(m => m.Id == id, includeProperties: "Category,CoverType")
+                ProductId = productId,
+                Product = _unitOfWork.Product.GetFirstOrDefault(m => m.Id == productId, includeProperties: "Category,CoverType")
             };
 
             return View(cartObj);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize] //.net core tag that only allows authorized users to access this method - when its just authorize any user can do it
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            shoppingCart.ApplicationUserId = claim.Value;
+
+
+            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index)); // nameof(Index) returns the name of the index action method in this context
         }
 
         public IActionResult Privacy()
