@@ -57,13 +57,14 @@ namespace Books.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PostalCode")
-                        .HasColumnType("int");
+                    b.Property<string>("PostalCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
@@ -86,7 +87,8 @@ namespace Books.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
