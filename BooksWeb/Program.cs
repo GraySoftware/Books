@@ -44,8 +44,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-StripeConfiguration
-app.UseAuthentication();;
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
+app.UseAuthentication();
 
 app.UseAuthorization();
 app.MapRazorPages();

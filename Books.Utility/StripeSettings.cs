@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Books.Utility
 {
-    internal class StripeSettings
+    public class StripeSettings
     {
+        public string SecretKey { get; set; }
+        public string PublishableKey { get; set; }
     }
 }
