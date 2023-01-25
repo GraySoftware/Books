@@ -42,6 +42,11 @@
                                 <i class="bi bi-cart"></i>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class=nav-link asp-area="Admin" asp-controller="Order" asp-action="Index">
+                                Manage Order
+                            </a>
+                        </li>
                         <asp:dropdownlist runat="server" id="ddlTest">
                             <asp:listitem text="Red" value="1"></asp:listitem>
                             <asp:listitem text="Black" value="2"></asp:listitem>
@@ -50,11 +55,11 @@
                             <asp:listitem text="Yellow" value="5"></asp:listitem>
                         </asp:dropdownlist>
                     </ul>
-                    <partial name="_LoginPartial"/>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
-        
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
