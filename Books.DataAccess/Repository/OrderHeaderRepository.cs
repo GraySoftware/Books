@@ -38,6 +38,7 @@ namespace Books.DataAccess.Repository
         public void UpdateStripePaymentId(int id, string sessionnId, string paymentIntentId)
         {
             var orderFromDb = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);
+            orderFromDb.PaymentDate = DateTime.Now;
             orderFromDb.SessionId = sessionnId;
             orderFromDb.PaymentIntentId = paymentIntentId;
         }
