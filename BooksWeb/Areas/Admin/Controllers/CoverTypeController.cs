@@ -8,10 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Books.DataAccess;
 using Books.Models;
 using Books.DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
+using Books.Utility;
 
 namespace BooksWeb.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CoverTypeController : Controller
     {
         private readonly IUnitOfWork _UnitOfWork;

@@ -9,10 +9,13 @@ using Books.DataAccess;
 using Books.Models;
 using Books.DataAccess.Repository.IRepository;
 using Books.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Books.Utility;
 
 namespace BooksWeb.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CompanyController : Controller
     {
         private readonly IUnitOfWork _UnitOfWork;
