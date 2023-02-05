@@ -23,6 +23,7 @@ namespace BulkyBook.Utility
             using (var emailClient = new SmtpClient())
             {
                 emailClient.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+                // this next line will not work and will cause an error, however i'm leaving the fix out for security reasons for my personal email
                 emailClient.Authenticate("dotnetmastery@gmail.com", "DotNet213$");
                 emailClient.Send(emailToSend);
                 emailClient.Disconnect(true);

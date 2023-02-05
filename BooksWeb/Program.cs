@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Books.Utility;
 using Stripe;
 
+
 var builder = WebApplication.CreateBuilder(args);
 // if we want to register anything in our dependency injector do it here
 
@@ -32,6 +33,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 var app = builder.Build();
 
+// needed to add sessions
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(100);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -48,6 +57,7 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSettings:Se
 app.UseAuthentication();
 
 app.UseAuthorization();
+app.UseSession();
 app.MapRazorPages();
 app.MapControllerRoute(
     // pattern defines the default controller/action a request will take. 
