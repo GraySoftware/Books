@@ -1,6 +1,7 @@
 ﻿using Books.DataAccess.Repository.IRepository;
 using Books.Models;
 using Books.Models.ViewModels;
+using Books.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -57,6 +58,10 @@ namespace BooksWeb.Controllers
             if (cartFromDb == null)
             {
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                // update shopping cart count
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
             }
             else 
             {
