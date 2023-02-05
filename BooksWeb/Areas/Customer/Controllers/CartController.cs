@@ -216,6 +216,10 @@ namespace BooksWeb.Areas.Customer.Controllers
             if (cart.Count <= 1)
             {
                 _unitOfWork.ShoppingCart.Remove(cart);
+
+                // decrement cart counter
+                var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count - 1;
+                HttpContext.Session.SetInt32(SD.SessionCart, count);
             }
             else
             {
@@ -231,6 +235,11 @@ namespace BooksWeb.Areas.Customer.Controllers
 
             _unitOfWork.ShoppingCart.Remove(cart);
             _unitOfWork.Save();
+
+            // decrement cart counter
+            var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count;
+            HttpContext.Session.SetInt32(SD.SessionCart, count);
+
             return RedirectToAction(nameof(Index));
         }
         private double GetPriceBasedOnQuantity(double quantity, double price, double price50, double price100)
